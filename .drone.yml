@@ -1,0 +1,13 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: default
+    image: debian:bullseye-slim
+    commands:
+      - apt-get update
+      - apt-get install -y --no-install-recommends ca-certificates curl make unzip xz-utils
+      - ./scripts/setup_toolchain
+      - ./build/ext/bin/task ci

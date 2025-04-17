@@ -1,0 +1,45 @@
+version: "3"
+
+tasks:
+  ci:
+    desc: Run all CI steps
+    deps: [lint]
+
+  lint:
+    desc: Run all linting steps
+    deps: [lint:shellcheck, lint:stylua]
+
+  format:
+    desc: Format all lua files with stylua
+    deps: [setup]
+    cmds:
+      - ./build/ext/bin/stylua lua
+
+  lint:shellcheck:
+    desc: Check all script files with shellcheck
+    deps: [setup]
+    cmds:
+      - ./build/ext/bin/shellcheck --enable=all --severity=style .envrc scripts/*
+
+  lint:stylua:
+    desc: Check all lua files with stylua
+    deps: [setup]
+    cmds:
+      - ./build/ext/bin/stylua --check lua
+
+  setup:
+    desc: Install the toolchain for development on Linux
+    run: once
+    sources:
+      - ./scripts/setup_toolchain
+    cmds:
+      - ./scripts/setup_toolchain
+    generates:
+      - ./build/ext/bin/shellcheck
+      - ./build/ext/bin/stylua
+      - ./build/ext/bin/task
+
+  clean:
+    desc: Delete all build artifacts
+    cmds:
+      - rm -rf build

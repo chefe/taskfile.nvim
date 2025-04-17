@@ -1,0 +1,92 @@
+#!/bin/sh
+
+set -e
+set -u
+
+installAll() {
+  rm -rf build/ext/bin
+  mkdir -p build/ext/bin
+
+  checkInstall "ShellCheck" "0.10.0"
+  checkInstall "StyLua" "2.0.2"
+  checkInstall "GoTask" "3.42.1"
+}
+
+checkInstall() {
+  name=$1
+  version=$2
+
+  install_path="build/ext"
+
+  if [ -d "${install_path}" ] && [ -f "${install_path}/.${name}_${version}" ]; then
+    "link${name}" "${install_path}" "${version}"
+    return
+  fi
+
+  mkdir -p "${install_path}/tmp/"
+  echo "Install ${name} - ${version}"
+  rm -rf "${install_path}/.${name}_"*
+  "install${name}" "${install_path}" "${version}"
+  touch "${install_path}/.${name}_${version}"
+  rm -rf "${install_path}/tmp"
+}
+
+installShellCheck() {
+  install_path=$1
+  version=$2
+
+  curl -L "https://github.com/koalaman/shellcheck/releases/download/v${version}/shellcheck-v${version}.linux.x86_64.tar.xz" --output "${install_path}/tmp/shellcheck.tar.xz"
+  rm -rf "${install_path}/shellcheck"
+  tar xf "${install_path}/tmp/shellcheck.tar.xz" -C "${install_path}"
+  mv "${install_path}/shellcheck-v${version}" "${install_path}/shellcheck"
+
+  linkShellCheck "${install_path}"
+}
+
+linkShellCheck() {
+  install_path=$1
+
+  bin_path="$(readlink -f "${install_path}/shellcheck/shellcheck")"
+  ln -s "${bin_path}" "${install_path}/bin/shellcheck"
+}
+
+installStyLua() {
+  install_path=$1
+  version=$2
+
+  curl -L "https://github.com/JohnnyMorganz/StyLua/releases/download/v${version}/stylua-linux-x86_64.zip" --output "${install_path}/tmp/stylua.zip"
+  rm -rf "${install_path}/stylua"
+  unzip "${install_path}/tmp/stylua.zip" -d "${install_path}/stylua"
+
+  linkStyLua "${install_path}"
+}
+
+linkStyLua() {
+  install_path=$1
+
+  bin_path="$(readlink -f "${install_path}/stylua/stylua")"
+  ln -s "${bin_path}" "${install_path}/bin/stylua"
+}
+
+installGoTask() {
+  install_path=$1
+  version=$2
+
+  curl -L "https://github.com/go-task/task/releases/download/v${version}/task_linux_amd64.tar.gz" --output "${install_path}/tmp/task.tar.gz"
+  rm -rf "${install_path}/task"
+  mkdir -p "${install_path}/task"
+  tar xf "${install_path}/tmp/task.tar.gz" -C "${install_path}/task"
+
+  linkGoTask "${install_path}"
+}
+
+linkGoTask() {
+  install_path=$1
+
+  bin_path="$(readlink -f "${install_path}/task/task")"
+  ln -s "${bin_path}" "${install_path}/bin/task"
+}
+
+script_path="$(readlink -f "$0")"
+cd "$(dirname "${script_path}")/.."
+installAll
