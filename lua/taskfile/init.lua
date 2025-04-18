@@ -90,22 +90,42 @@ local register_task_command = function()
   })
 end
 
+--- Resolve the plugin options based on the provided defaults and overrides.
+local resolve_options = function(defaults, overrides)
+  if overrides == nil then
+    return defaults
+  end
+
+  local result = {}
+
+  for key, value in pairs(defaults) do
+    if overrides[key] ~= nil and type(overrides[key]) == type(value) then
+      result[key] = overrides[key]
+    else
+      result[key] = value
+    end
+  end
+
+  return result
+end
+
 --- @class PluginOptions
---- @field command string|nil Configure the path to the `task` binary.
+--- @field command string|nil Configure the path to the `task` binary (Default: task).
+--- @field register_command boolean|nil Configure if the `:Task` command should be registed (Default: true).
+
+--- @type PluginOptions
+local default_options = { command = 'task', register_command = true }
 
 --- Setup the taskfile plugin.
 --- @param options PluginOptions|nil Setup the plugin with these options.
 function M.setup(options)
-  if
-    options ~= nil
-    and type(options) == 'table'
-    and options.command ~= nil
-    and type(options.command) == 'string'
-  then
-    M.command = options.command
-  end
+  options = resolve_options(default_options, options)
 
-  register_task_command()
+  M.command = options.command
+
+  if options.register_command then
+    register_task_command()
+  end
 end
 
 return M

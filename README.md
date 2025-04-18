@@ -57,8 +57,12 @@ return {
 
 ```lua
 require('taskfile').setup({
+  -- Specify a custom path to the `task` binary.
   -- Default: 'task' (if omitted)
   command = '/path/to/special/go-task-binary'
+  -- Enable or diable the registration of the `:Task` command.
+  -- Default: true (if omitted)
+  register_command = false,
 })
 ```
 
