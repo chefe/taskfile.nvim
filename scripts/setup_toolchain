@@ -9,6 +9,7 @@ installAll() {
 
   checkInstall "ShellCheck" "0.10.0"
   checkInstall "StyLua" "2.0.2"
+  checkInstall "Selene" "0.28.0"
   checkInstall "GoTask" "3.42.1"
 }
 
@@ -66,6 +67,26 @@ linkStyLua() {
 
   bin_path="$(readlink -f "${install_path}/stylua/stylua")"
   ln -s "${bin_path}" "${install_path}/bin/stylua"
+}
+
+installSelene() {
+  install_path=$1
+  version=$2
+
+  curl -L "https://github.com/Kampfkarren/selene/releases/download/${version}/selene-${version}-linux.zip" --output "${install_path}/tmp/selene.zip"
+  rm -rf "${install_path}/selene"
+  mkdir -p "${install_path}/selene"
+  unzip "${install_path}/tmp/selene.zip" -d "${install_path}/selene"
+  chmod +x "${install_path}/selene/selene"
+
+  linkSelene "${install_path}"
+}
+
+linkSelene() {
+  install_path=$1
+
+  bin_path="$(readlink -f "${install_path}/selene/selene")"
+  ln -s "${bin_path}" "${install_path}/bin/selene"
 }
 
 installGoTask() {
