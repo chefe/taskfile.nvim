@@ -7,10 +7,10 @@ installAll() {
   rm -rf build/ext/bin
   mkdir -p build/ext/bin
 
-  checkInstall "ShellCheck" "0.10.0"
-  checkInstall "StyLua" "2.0.2"
-  checkInstall "Selene" "0.28.0"
-  checkInstall "GoTask" "3.42.1"
+  checkInstall "ShellCheck" "0.11.0"
+  checkInstall "StyLua" "2.2.0"
+  checkInstall "Selene" "0.29.0"
+  checkInstall "GoTask" "3.45.4"
 }
 
 checkInstall() {
