@@ -7,7 +7,7 @@ tasks:
 
   lint:
     desc: Run all linting steps
-    deps: [lint:shellcheck, lint:stylua, lint:selene]
+    deps: [lint:shellcheck, lint:shfmt, lint:stylua, lint:selene]
 
   format:
     desc: Format all lua files with stylua
@@ -21,6 +21,12 @@ tasks:
     cmds:
       - ./build/ext/bin/shellcheck --enable=all --severity=style .envrc scripts/*
 
+  lint:shfmt:
+    desc: Check all script files with shfmt
+    deps: [setup]
+    cmds:
+      - ./build/ext/bin/shfmt --list --diff --simplify --indent 2 .envrc scripts/*
+
   lint:stylua:
     desc: Check all lua files with stylua
     deps: [setup]
@@ -31,7 +37,7 @@ tasks:
     desc: Check all lua files with selene
     deps: [setup]
     cmds:
-      - ./build/ext/bin/selene lua
+      - ./build/ext/bin/selene --no-summary lua
 
   setup:
     desc: Install the toolchain for development on Linux

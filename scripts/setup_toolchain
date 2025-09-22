@@ -8,6 +8,7 @@ installAll() {
   mkdir -p build/ext/bin
 
   checkInstall "ShellCheck" "0.11.0"
+  checkInstall "Shfmt" "3.12.0"
   checkInstall "StyLua" "2.2.0"
   checkInstall "Selene" "0.29.0"
   checkInstall "GoTask" "3.45.4"
@@ -49,6 +50,24 @@ linkShellCheck() {
 
   bin_path="$(readlink -f "${install_path}/shellcheck/shellcheck")"
   ln -s "${bin_path}" "${install_path}/bin/shellcheck"
+}
+
+installShfmt() {
+  install_path=$1
+  version=$2
+
+  rm -rf "${install_path}/shfmt"
+  mkdir -p "${install_path}/shfmt"
+  curl -L "https://github.com/mvdan/sh/releases/download/v${version}/shfmt_v${version}_linux_amd64" --output "${install_path}/shfmt/shfmt"
+
+  linkShfmt "${install_path}"
+}
+
+linkShfmt() {
+  install_path=$1
+
+  bin_path="$(readlink -f "${install_path}/shfmt/shfmt")"
+  ln -s "${bin_path}" "${install_path}/bin/shfmt"
 }
 
 installStyLua() {
