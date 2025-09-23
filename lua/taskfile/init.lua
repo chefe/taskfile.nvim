@@ -27,9 +27,20 @@ function M.get_tasks()
 end
 
 --- Run the given task.
---- @param task string
-function M.run_task(task)
-  vim.fn.execute(':terminal ' .. M.command .. ' ' .. task)
+--- @param args string|table The arguments for the task command.
+function M.run_task(args)
+  local command = ':terminal ' .. M.command
+
+  if type(args) == 'string' then
+    vim.fn.execute(command .. ' ' .. args)
+    return
+  end
+
+  for _, v in ipairs(args) do
+    command = command .. ' ' .. v
+  end
+
+  vim.fn.execute(command)
 end
 
 --- Open a selection window to select a task to run

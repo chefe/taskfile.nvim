@@ -50,6 +50,7 @@ return {
 
 * Run `:Task` to show a menu menu of all defined tasks.
 * Run `:Task {task}` to run the task `{task}` in a terminal buffer.
+* Run `:Task {task} {arguments}` to run the task with the given arguments.
 * Run `:lua require("taskfile.telescope").run_task()` to open a telescope
   picker or use the keymap defined in the Lazy plugin definition.
 
