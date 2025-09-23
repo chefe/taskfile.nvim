@@ -64,6 +64,11 @@ require('taskfile').setup({
   -- Enable or diable the registration of the `:Task` command.
   -- Default: true (if omitted)
   register_command = false,
+  -- Define out the task command should be executed.
+  -- Default: use `nvim_command` with `terminal`
+  execute = function(cmd)
+    vim.api.nvim_command('terminal ' .. cmd)
+  end
 })
 ```
 

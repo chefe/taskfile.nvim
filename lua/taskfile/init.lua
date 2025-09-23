@@ -1,7 +1,23 @@
+--- @class PluginOptions
+--- @field command string|nil Configure the path to the `task` binary (Default: task).
+--- @field register_command boolean|nil Configure if the `:Task` command should be registed (Default: true).
+--- @field execute function|nil Configure how the command should be executed. (Default: terminal buffer)
+
+--- @type PluginOptions
+local default_options = {
+  command = 'task',
+  register_command = true,
+  execute = function(command)
+    vim.api.nvim_command('terminal ' .. command)
+  end,
+}
+
 local M = {
   --- The path to the `task` binary. By default use the `task` binary which is
   --- found in the `PATH`.
-  command = 'task',
+  command = default_options.command,
+  --- The function to execute the `task` command.
+  execute = default_options.execute,
 }
 
 --- @class TaskDescription
@@ -29,18 +45,17 @@ end
 --- Run the given task.
 --- @param args string|table The arguments for the task command.
 function M.run_task(args)
-  local command = ':terminal ' .. M.command
-
   if type(args) == 'string' then
-    vim.fn.execute(command .. ' ' .. args)
+    M.execute(M.command .. ' ' .. args)
     return
   end
 
+  local command = M.command
   for _, v in ipairs(args) do
     command = command .. ' ' .. v
   end
 
-  vim.fn.execute(command)
+  M.execute(command)
 end
 
 --- Open a selection window to select a task to run
@@ -120,19 +135,13 @@ local resolve_options = function(defaults, overrides)
   return result
 end
 
---- @class PluginOptions
---- @field command string|nil Configure the path to the `task` binary (Default: task).
---- @field register_command boolean|nil Configure if the `:Task` command should be registed (Default: true).
-
---- @type PluginOptions
-local default_options = { command = 'task', register_command = true }
-
 --- Setup the taskfile plugin.
 --- @param options PluginOptions|nil Setup the plugin with these options.
 function M.setup(options)
   options = resolve_options(default_options, options)
 
   M.command = options.command
+  M.execute = options.execute
 
   if options.register_command then
     register_task_command()
